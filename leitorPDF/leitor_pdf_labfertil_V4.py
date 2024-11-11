@@ -146,6 +146,13 @@ def upload_pdf():
     argila = extrair_valor_argila(pdf_path)
     P = extrair_valor_p(pdf_path)
 
+    #Substituição de vírgulas por pontos
+    SMP = SMP.replace(',', '.')
+    K = K.replace(',', '.')
+    base = base.replace(',', '.')
+    argila = argila.replace(',', '.')
+    P = P.replace(',', '.')
+
     # Armazenando os dados em um dicionário
     dados_analise = {
         "Ind.SMP": SMP,
@@ -157,7 +164,7 @@ def upload_pdf():
 
     # Convertendo o dicionário para JSON
     dados_json = json.dumps(dados_analise, indent=4, ensure_ascii=False)
-    
+    print(dados_json)
     return jsonify(dados_json)
 
 if __name__ == '__main__':
