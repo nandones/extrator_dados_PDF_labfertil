@@ -69,12 +69,6 @@ import json
 
 app = Flask(__name__)
 
-def extrair_valor_ind_smp(pdf_path):
-    pdf_document = fitz.open(pdf_path)
-    page = pdf_document[0]  # Primeira página
-    valor = extrair_valor_abaixo(page, "SMP", -10, 0, 10, 15)
-    pdf_document.close()
-    return valor
 
 def extrair_valor_k(pdf_path):
     pdf_document = fitz.open(pdf_path)
