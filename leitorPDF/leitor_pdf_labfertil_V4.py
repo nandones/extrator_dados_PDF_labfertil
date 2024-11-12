@@ -11,6 +11,10 @@
 # API Flask: O Flask é usado para criar um servidor web simples.
 # Rota /upload_pdf: O endpoint /upload_pdf recebe um arquivo PDF via método POST. O arquivo é salvo temporariamente no servidor e processado.
 # Envio de Arquivo via HTTP: O arquivo PDF é enviado por um cliente (como um navegador ou outro script).
+#
+# O algoritmo identifica o sucesso em coletar dados de todos os campos. Caso o faça, envia junto ao json a String 
+# status : "success", enquanto a falha envia junto ao json status : "failed", junto com uma chave cujo valor 
+# não identificado volta como null.
 
 # Para executar a aplicação:
 # 1) Instalar dependencias:
@@ -107,6 +111,13 @@ def extrair_valor_ind_smp(pdf_path):
     pdf_document.close()
     return valor
 
+def extrair_valor_ctc(pdf_path):
+    pdf_document = fitz.open(pdf_path)
+    page = pdf_document[0]
+    valor = extrair_valor_abaixo(page, "CTC (pH 7,0)", -10, 0, 10, 11)
+    pdf_document.close()
+    return valor
+
 def extrair_valor_abaixo(page, keyword, left=-5, top=0, right=5, below=11):
     # Localiza o texto da palavra-chave na página
     text_instances = page.search_for(keyword)
@@ -145,21 +156,41 @@ def upload_pdf():
     base = extrair_valor_bases_v(pdf_path)
     argila = extrair_valor_argila(pdf_path)
     P = extrair_valor_p(pdf_path)
+    CTC = extrair_valor_ctc(pdf_path)
 
-    #Substituição de vírgulas por pontos
-    SMP = SMP.replace(',', '.')
-    K = K.replace(',', '.')
-    base = base.replace(',', '.')
-    argila = argila.replace(',', '.')
-    P = P.replace(',', '.')
+    if(SMP == None or K == None or base == None or argila == None or P == None or CTC == None):
+        status = "failed"
+    else:
+        status = "success"
+
+    if(SMP != None):
+        SMP = SMP.replace(',', '.')#Substituição de vírgulas por pontos
+        SMP = float(SMP)#transforma os dados em float
+    if(K != None):
+        K = K.replace(',', '.')
+        K = float(K)
+    if(base != None):
+        base = base.replace(',', '.')
+        base = float(base)
+    if(argila != None):
+        argila = argila.replace(',', '.')
+        argila = float(argila)
+    if(P != None):
+        P = P.replace(',', '.')
+        P = float(P)
+    if(CTC != None):
+        CTC = CTC.replace(',', '.')
+        CTC = float(CTC)
 
     # Armazenando os dados em um dicionário
     dados_analise = {
-        "Ind.SMP": SMP,
+        "status": status,
+        "bases": base,
+        "SMP": SMP,
+        "CTC_ph7": CTC,
+        "argila": argila,
+        "P": P,
         "K": K,
-        "Bases(%V)": base,
-        "Argila": argila,
-        "P": P
     }
 
     # Convertendo o dicionário para JSON

@@ -26,7 +26,7 @@ pdf_document = fitz.open(".\Exemplo de Laudo - Análise de Solo.pdf")
 page = pdf_document[0]  # Primeira página
 
 # Define as palavras-chave para busca
-keywords = ["SMP", "K ", "Bases", "Argila", " P "]
+keywords = ["SMP", "K ", "Bases", "Argila", " P ", "CTC (pH 7,0)"]
 extracted_values = {}
 
 # Itera sobre as palavras-chave e extrai os valores

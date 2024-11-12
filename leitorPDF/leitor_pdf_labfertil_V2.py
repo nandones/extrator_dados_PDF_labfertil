@@ -1,9 +1,15 @@
 # é necessário instalar o PyMuPDF antes, execute no CMD:
 # pip install PyMuPDF
+#
+# O software configurado com o filepath correto o lê e exibe um json contendo seus dados pertinentes a esse microsserviço.
 
-# A correta configuração do leitor exigiria um domínio dos pontos (pt, a unidade de m,edida padrão dos PDFs),]
-# mas seria conveniente um serviço como adobe acrobat, que é pago.
-# Outra solução é com um campo amostral de PDFs maior, onsabendo-se que de o método que extrai os dados se mostra bastante maleável,
+# O algoritmo identifica o sucesso em coletar dados de todos os campos. Caso o faça, envia junto ao json a String 
+# status : "success", enquanto a falha envia junto ao json status : "failed", junto com uma chave cujo valor 
+# não identificado volta como null.
+#
+# A correta configuração do leitor exigiria um domínio dos pontos (pt, a unidade de medida padrão dos PDFs),
+# onde seria conveniente um serviço como adobe acrobat, que é pago.
+# Outra solução é com um campo amostral de PDFs maior, sabendo-se que de o método que extrai os dados se mostra bastante maleável,
 # aceitando valores extras para ajustar o padding de cada variável individualmente.
 #
 #
@@ -64,6 +70,13 @@ def extrair_valor_p(pdf_path):
     pdf_document.close()
     return valor
 
+def extrair_valor_ctc(pdf_path):
+    pdf_document = fitz.open(pdf_path)
+    page = pdf_document[0]
+    valor = extrair_valor_abaixo(page, "CTC (pH 7,0)", -10, 0, 10, 11)
+    pdf_document.close()
+    return valor
+
 # Função auxiliar para encontrar o valor abaixo de uma palavra-chave
 def extrair_valor_abaixo(page, keyword, left=-5, top=0, right=5, below=11):
     # Localiza o texto da palavra-chave na página
@@ -82,7 +95,7 @@ def extrair_valor_abaixo(page, keyword, left=-5, top=0, right=5, below=11):
 
 # Exemplo de uso
 
-pdf_path = ".\Exemplo de Laudo - Análise de Solo.pdf"
+pdf_path = "Exemplo de Laudo - Análise de Solo.pdf"
 
 #Extração dos dados
 SMP = extrair_valor_ind_smp(pdf_path)
@@ -90,22 +103,42 @@ K = extrair_valor_k(pdf_path)
 base = extrair_valor_bases_v(pdf_path)
 argila = extrair_valor_argila(pdf_path)
 P = extrair_valor_p(pdf_path)
+CTC = extrair_valor_ctc(pdf_path)
 
-#Substituição de vírgulas por pontos
-SMP = SMP.replace(',', '.')
-K = K.replace(',', '.')
-base = base.replace(',', '.')
-argila = argila.replace(',', '.')
-P = P.replace(',', '.')
 
+if(SMP == None or K == None or base == None or argila == None or P == None or CTC == None):
+    status = "failed"
+else:
+    status = "success"
+
+if(SMP != None):
+    SMP = SMP.replace(',', '.')#Substituição de vírgulas por pontos
+    SMP = float(SMP)#transforma os dados em float
+if(K != None):
+    K = K.replace(',', '.')
+    K = float(K)
+if(base != None):
+    base = base.replace(',', '.')
+    base = float(base)
+if(argila != None):
+    argila = argila.replace(',', '.')
+    argila = float(argila)
+if(P != None):
+    P = P.replace(',', '.')
+    P = float(P)
+if(CTC != None):
+    CTC = CTC.replace(',', '.')
+    CTC = float(CTC)
 
 # Armazenando os dados em um dicionário
 dados_analise = {
-    "Ind.SMP": SMP,
+    "status": status,
+    "bases": base,
+    "SMP": SMP,
+    "CTC_ph7": CTC,
+    "argila": argila,
+    "P": P,
     "K": K,
-    "Bases(%V)": base,
-    "Argila": argila,
-    "P": P
 }
 
 # Convertendo o dicionário para JSON
