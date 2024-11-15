@@ -45,7 +45,7 @@ Para permitir que outros dispositivos acessem o servidor na rede:
 ## Execução da Aplicação
 1. Execute o script a partir do terminal no diretório do arquivo:
     ```shell
-    python leitor_pdf_labfertil_V4.py
+    python leitor_pdf_labfertil_V5.py
     ```
    ou rode a aplicação por uma IDE.
    
