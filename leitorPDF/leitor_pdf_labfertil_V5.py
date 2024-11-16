@@ -21,6 +21,7 @@
 #
 #    pip install Flask
 #    pip install PyMuPDF
+#    pip install flask-cors
 #
 # 2) configure o servidor Flask:
 #
@@ -38,7 +39,7 @@
 # 3) Inicie o servidor Flask:
 #  Após abrir o atual diretóro no CMD, digite:
 #
-#    python leitor_pdf_labfertil_V4.py
+#    python leitor_pdf_labfertil_V5.py
 #
 #  ou rode a aplicação por uma IDE.
 #
@@ -66,9 +67,10 @@
 from flask import Flask, request, jsonify
 import fitz  # PyMuPDF
 import json
+from flask_cors import CORS # type: ignore
 
 app = Flask(__name__)
-
+CORS(app)
 
 def extrair_valor_abaixo(page, keyword, left=-5, top=0, right=5, below=11):
     # Localiza o texto da palavra-chave na página
