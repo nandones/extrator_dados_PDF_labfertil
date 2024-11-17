@@ -1,7 +1,3 @@
-# é necessário instalar o PyMuPDF e o Flaskantes, execute no CMD:
-# pip install PyMuPDF
-# pip install Flask
-
 # A correta configuração do leitor exigiria um domínio dos pontos (pt, a unidade de m,edida padrão dos PDFs),]
 # mas seria conveniente um serviço como adobe acrobat, que é pago.
 # Outra solução é com um campo amostral de PDFs maior, sabendo-se que de o método que extrai os dados se mostra bastante maleável,
