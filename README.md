@@ -1,6 +1,6 @@
 # Projeto de Extração de Dados de Laudos Labfertil com Flask e PyMuPDF
 
-  - Este projeto foi desenvolvido como microsserviço de um trabalho da disciplina de **Inteligência Artificial** para extrair dados específicos (``Ind. SMP``,``CTC (pH 7,0)``,``K``,``Bases(V%)``,``Argila``,``P``) de laudos de análise de solo emitidos pelo **Labfertil**. Utiliza **Flask** para criar uma API e **PyMuPDF** para manipular PDFs, permitindo que os dados sejam extraídos e retornados ao fazer a requisição por meio de um ``json`` a partir de PDFs enviados via requisição HTTP ``POST``.<br>
+  - Este projeto foi desenvolvido como microsserviço de um trabalho da disciplina de **Inteligência Artificial** para extrair dados específicos (``Ref.``,``Ind. SMP``,``CTC (pH 7,0)``,``K``,``Argila``,``P``) de laudos de análise de solo emitidos pelo **Labfertil**. Utiliza **Flask** para criar uma API e **PyMuPDF** para manipular PDFs, permitindo que os dados sejam extraídos e retornados ao fazer a requisição por meio de um ``json`` a partir de PDFs enviados via requisição HTTP ``POST``.<br>
   - Há uma cópia de Laudo de Análise de solo presente no repositório apenas para evidenciar com qual arquivo PDF a aplicação trabalha.<br>
   - O leitor de PDFs irá ler e devolver os valores múltiplas linhas, caso haja múltiplas linhas, as dividindo por id, do 1 (primeira linha) até n (enésima linha).
   - Faz um tratamento de dados bastante rigoroso com as exceções encontradas, devolvendo "status" : "failed" e "error" : "a descrição do erro em questão" no json retornado.
@@ -12,10 +12,11 @@
 2. **Dependências:** `requirements.txt` - Lista de pacotes Python necessários, incluindo:
    - Flask
    - PyMuPDF (fitz)
+   - flask_cors
 
 3. **Servidor Hospedado:** Uma versão do servidor foi hospedada em `http://nandones.pythonanywhere.com/upload_pdf`, que:
    - Processa PDFs enviados para o sufixo `/upload_pdf` dessa URL.
-   - confira se o servidor ainda está online, clique [aqui](http://nandones.pythonanywhere.com) e esteja atento ao status do erro:
+   - confira se o servidor ainda está online, clique [aqui](http://nandones.pythonanywhere.com).
    - Caso online, você poderá testá-la via cURL no **CMD**:
 ```shell
 curl -X POST -F "file=@C:/caminho/para/seu/arquivo/Exemplo de Laudo - Análise de Solo.pdf" http://nandones.pythonanywhere.com/upload_pdf
@@ -64,7 +65,7 @@ Exemplo de JSON de resposta numa operação de sucesso onde há 1 conjuntos de v
     "data": [
         {
             "id": 1,
-            "bases": 82.42,
+            "ref": "01 LP 3",
             "SMP": 6.21,
             "CTC_ph7": 19.52,
             "argila": 35.0,
@@ -82,7 +83,7 @@ Exemplo de JSON de resposta numa operação de sucesso onde há 3 conjuntos de v
     "data": [
         {
             "id": 1,
-            "bases": 82.42,
+            "ref": "01 LP 3",
             "SMP": 6.21,
             "CTC_ph7": 19.52,
             "argila": 35.0,
@@ -91,7 +92,7 @@ Exemplo de JSON de resposta numa operação de sucesso onde há 3 conjuntos de v
         },
         {
             "id": 2,
-            "bases": 83.28,
+            "ref": "02 LPO",
             "SMP": 6.16,
             "CTC_ph7": 21.73,
             "argila": 37.0,
@@ -100,7 +101,7 @@ Exemplo de JSON de resposta numa operação de sucesso onde há 3 conjuntos de v
         },
         {
             "id": 3,
-            "bases": 86.77,
+            "ref": "03 LA",
             "SMP": 6.34,
             "CTC_ph7": 22.28,
             "argila": 40.0,
@@ -118,16 +119,16 @@ Exemplo de JSON de resposta numa operação de sucesso onde há 8 conjuntos de v
     "data": [
         {
             "id": 1,
-            "bases": 12.42,
+            "ref": "01 LPppppppppppppp 3",
             "SMP": 16.31,
-            "CTC_ph7": 19.52,
-            "argila": 135.0,
-            "P": 19.6,
+            "CTC_ph7": 123456789123456.0,
+            "argila": 11111111.0,
+            "P": 2222222.0,
             "K": 117.0
         },
         {
             "id": 2,
-            "bases": 23.28,
+            "ref": "02 LPO",
             "SMP": 26.16,
             "CTC_ph7": 21.73,
             "argila": 237.0,
@@ -136,7 +137,7 @@ Exemplo de JSON de resposta numa operação de sucesso onde há 8 conjuntos de v
         },
         {
             "id": 3,
-            "bases": 36.77,
+            "ref": "03 LA",
             "SMP": 36.34,
             "CTC_ph7": 322.28,
             "argila": 340.0,
@@ -145,7 +146,7 @@ Exemplo de JSON de resposta numa operação de sucesso onde há 8 conjuntos de v
         },
         {
             "id": 4,
-            "bases": 40.44,
+            "ref": "04 TESTE",
             "SMP": 4.78,
             "CTC_ph7": 4.777,
             "argila": 450.0,
@@ -154,7 +155,7 @@ Exemplo de JSON de resposta numa operação de sucesso onde há 8 conjuntos de v
         },
         {
             "id": 5,
-            "bases": 50.55,
+            "ref": "05 2PONTOOS",
             "SMP": 5.78,
             "CTC_ph7": 5.0,
             "argila": 500.0,
@@ -163,7 +164,7 @@ Exemplo de JSON de resposta numa operação de sucesso onde há 8 conjuntos de v
         },
         {
             "id": 6,
-            "bases": 60.66,
+            "ref": "06 HEHEHEH",
             "SMP": 66.0,
             "CTC_ph7": 6.78,
             "argila": 677.0,
@@ -172,7 +173,7 @@ Exemplo de JSON de resposta numa operação de sucesso onde há 8 conjuntos de v
         },
         {
             "id": 7,
-            "bases": 7.77,
+            "ref": "07 RATINHOO",
             "SMP": 77.0,
             "CTC_ph7": 777.0,
             "argila": 777.0,
@@ -181,7 +182,7 @@ Exemplo de JSON de resposta numa operação de sucesso onde há 8 conjuntos de v
         },
         {
             "id": 8,
-            "bases": 88.89,
+            "ref": "0,8 DEU BOA",
             "SMP": 88.45,
             "CTC_ph7": 890.19,
             "argila": 8.88,
