@@ -94,17 +94,18 @@ def extrair_valor_k(pdf_path):
     pdf_document.close()
     return valor
 
+# valor das bases(%V)removido do projeto final
 def extrair_valor_bases_v(pdf_path):
     pdf_document = fitz.open(pdf_path)
     page = pdf_document[0]
-    valor = extrair_valor_abaixo(page, "Bases", -10, 0, 10, 90)
+    valor = extrair_valor_abaixo(page, "Bases", -5, 0, 25, 90)
     pdf_document.close()
     return valor
 
 def extrair_valor_argila(pdf_path):
     pdf_document = fitz.open(pdf_path)
     page = pdf_document[0]
-    valor = extrair_valor_abaixo(page, "Argila", -10, 0, 10, 90)
+    valor = extrair_valor_abaixo(page, "Argila", -5, 0, 5, 90)
     pdf_document.close()
     return valor
 
@@ -118,7 +119,7 @@ def extrair_valor_p(pdf_path):
 def extrair_valor_ind_smp(pdf_path):
     pdf_document = fitz.open(pdf_path)
     page = pdf_document[0]  # Primeira página
-    valor = extrair_valor_abaixo(page, "SMP", -10, 0, 10, 90)
+    valor = extrair_valor_abaixo(page, "SMP", -5, 0, 10, 90)
     pdf_document.close()
     return valor
 
@@ -129,6 +130,12 @@ def extrair_valor_ctc(pdf_path):
     pdf_document.close()
     return valor
 
+def extrair_valor_ref(pdf_path):
+    pdf_document = fitz.open(pdf_path)
+    page = pdf_document[0]  # Primeira página
+    valor = extrair_valor_abaixo(page, " Ref. ", -30, 0, 35, 110)
+    pdf_document.close()
+    return valor
 def trata_dados(data):
     # Divide a string por espaços e substitui vírgulas por pontos
     data = data.split()
@@ -147,12 +154,11 @@ def trata_dados(data):
     print(data, "len(", len(data), ")")
     return data
 
-
-def criar_json( CTC, SMP, K, P, argila, base):
+def criar_json( CTC, SMP, K, P, argila, ref):
 
     # Verifica se todos os arrays possuem o mesmo tamanho
     n = len(CTC)
-    if not all(len(arr) == n for arr in [SMP, K, P, argila, base]):
+    if not all(len(arr) == n for arr in [SMP, K, P, argila, ref]):
         return json.dumps({"status": "failed", "error": "Os arrays têm tamanhos diferentes"})
     if n == 0:
         return json.dumps({"status": "failed", "error": "Nenhum valor capturado"})
@@ -163,7 +169,7 @@ def criar_json( CTC, SMP, K, P, argila, base):
     for i in range(n):
         item = {
             "id": i + 1,  # Define o ID iniciando em 1
-            "bases": base[i],
+            "ref":ref[i],
             "SMP": SMP[i],
             "CTC_ph7": CTC[i],
             "argila": argila[i],
@@ -221,19 +227,22 @@ def upload_pdf():
     # Extração dos dados
     SMP = extrair_valor_ind_smp(pdf_path)
     K = extrair_valor_k(pdf_path)
-    base = extrair_valor_bases_v(pdf_path)
+    #base = extrair_valor_bases_v(pdf_path)
     argila = extrair_valor_argila(pdf_path)
     P = extrair_valor_p(pdf_path)
     CTC = extrair_valor_ctc(pdf_path)
+    ref = extrair_valor_ref(pdf_path)
 
     CTC = trata_dados(CTC)
-    base = trata_dados(base)
+    #base = trata_dados(base)
     K = trata_dados(K)
     argila = trata_dados(argila)
     P = trata_dados(P)
     SMP = trata_dados(SMP)
+    ref = ref.split('\n')
+    print(ref,"len(" ,len(ref),")")
 
-    if (CTC == "erro" or base == "erro" or K == "erro" or argila == "erro" or P == "erro" or SMP == "erro"):
+    if (CTC == "erro" or K == "erro" or argila == "erro" or P == "erro" or SMP == "erro"):
         log = {
             "status" : "failed",
             "error" : "presença de valor não numérico"            
@@ -243,7 +252,7 @@ def upload_pdf():
     
     else:
 
-        json_resultado = criar_json(CTC, SMP, K, P, argila, base)
+        json_resultado = criar_json(CTC, SMP, K, P, argila, ref)
         print(json_resultado)
         
         print('''
