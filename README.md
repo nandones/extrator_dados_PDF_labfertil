@@ -1,7 +1,7 @@
 # Projeto de Extração de Dados de Laudos Labfertil com Flask e PyMuPDF 📄🌱
 
   - Este projeto foi desenvolvido como microsserviço de um trabalho da disciplina de **Inteligência Artificial** para extrair dados específicos (``Ref.``,``Ind. SMP``,``CTC (pH 7,0)``,``K``,``Argila``,``P``) de laudos de análise de solo emitidos pelo **Labfertil**. Utiliza **Flask** para criar uma API e **PyMuPDF** para manipular PDFs, permitindo que os dados sejam extraídos e retornados ao fazer a requisição por meio de um ``json`` a partir de PDFs enviados via requisição HTTP ``POST``.<br>
-  - Há uma cópia de Laudo de Análise de solo presente no repositório apenas para evidenciar com qual arquivo PDF a aplicação trabalha.<br>
+  - Há várias cópias de Laudo de Análise de solo presentes no repositório apenas para evidenciar com qual arquivo PDF a aplicação trabalha.<br>
   - O leitor de PDFs irá ler e devolver os valores múltiplas linhas, caso haja múltiplas linhas, as dividindo por id, do 1 (primeira linha) até n (enésima linha).
   - Faz um tratamento de dados bastante rigoroso com as exceções encontradas, devolvendo "status" : "failed" e "error" : "a descrição do erro em questão" no json retornado.
   - O programa irá gerar um PDF temporário a partir do PDF recebido pela requisição, que será sobreescrito após nova requisição.
